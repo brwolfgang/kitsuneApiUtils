@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta content="text/html">
+    <meta charset="utf-8">
+    <title>Kitsune Utils</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <style type="text/css">
+       body {
+           font-family: "Open Sans",sans-serif;
+       }
+    </style>
+</head>
+<body>
+<div id="app"></div>
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js" type="text/javascript"></script>
+<script src="https://unpkg.com/vue" type="text/javascript"></script>
+
+<script type="text/javascript">
+    Vue.component('pesquisa-input', {
+        //language=HTML
+        template: `
+            <div class="w3-margin-bottom w3-col s3 w3-card-4 w3-margin-right">
+                <header class="w3-container w3-blue-grey"><h3>Consulta</h3></header>
+                <div class="w3-container">
+                    <div class="w3-section"><label for="termosConsulta">Palavra chave</label>
+                        <input type="text"
+                               v-model="palavraChave"
+                               id="termosConsulta"
+                               v-on:keyup.enter="updatePalavraChave"
+                               class="w3-input">
+                    </div>
+                    <p>
+                        <button class="w3-button w3-blue-gray"
+                                v-if="!buscaEmAndamento"
+                                @click="updatePalavraChave()"
+                        >Pesquisar</button>
+                        <span v-if="buscaEmAndamento">Buscando...</span>
+                    </p>
+                </div>
+            </div>`,
+        data: function () {
+            return {
+                palavraChave: ''
+            }
+        },
+        props: {
+            buscaEmAndamento: Boolean
+        },
+        methods: {
+            updatePalavraChave: function () {
+                if (this.palavraChave.trim().length !== 0) {
+                    this.$emit('updatePalavraChave', this.palavraChave);
+                } else {
+                    alert('Digite uma palavra chave');
+                }
+            }
+        }
+    });
+
+    Vue.component('pesquisa-resultado', {
+        template: `
+    <div class="w3-margin-bottom w3-col s12 w3-card-4">
+            <header class="w3-container w3-blue-grey">
+                <h3>{{dados.documents.length}} artigo(s) contendo "{{palavraChave}}"</h3>
+            </header>
+            <div class="w3-container">
+                <div class="w3-section">
+                    <ol v-if="!buscaEmAndamento">
+                        <li v-for="documento in dados.documents">
+                        <a v-bind:href="baseUrlArtigo + documento.url" target="_blank"><b>{{documento.title}}</b></a>
+                        <ul><li>{{documento.summary}}</li></ul>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>`,
+        data: function () {
+            return {
+            }
+        },
+        props: {
+            dados: Object,
+            baseUrlArtigo: String,
+            palavraChave: String,
+            buscaEmAndamento: Boolean
+        }
+    });
+
+    let vueApp = new Vue({
+        el: '#app',
+        //language=html
+        template: `
+            <div>
+                <div class="w3-container w3-blue-gray w3-margin-bottom w3-card-4">
+                    <h2>Kitsune API Utils</h2>
+                </div>
+                <div style="margin-left: 3%; margin-right: 3%">
+                    <pesquisa-input
+                        @updatePalavraChave="updatePalavraChave"
+                        v-bind:buscaEmAndamento="buscaEmAndamento"
+                    />
+                    <pesquisa-resultado
+                        v-if="listaResultados.documents.length > 0"
+                        v-bind:dados="listaResultados"
+                        v-bind:baseUrlArtigo="urlBase"
+                        v-bind:palavraChave="palavraChave"
+                        v-bind:buscaEmAndamento="buscaEmAndamento"
+                    />
+                </div>
+            </div>`,
+
+        data: function () {
+            return {
+                palavraChave: '',
+                urlBase: 'https://support.mozilla.org',
+                urlApiMozilla: '/api/2/search/suggest?locale=pt-BR&max_documents=100',
+                listaResultados: {
+                    documents: [],
+                    questions: []
+                },
+                buscaEmAndamento: false
+            };
+        },
+
+        methods: {
+            updatePalavraChave: function (novaPalavraChave) {
+                this.palavraChave = novaPalavraChave;
+            },
+            updateResultados: function (dados) {
+                console.log(dados);
+                this.buscaEmAndamento = false;
+
+                this.listaResultados.documents = dados.documents;
+                this.listaResultados.questions = dados.questions;
+            }
+        },
+
+        watch: {
+            palavraChave: function (novaPalavraChave) {
+                this.buscaEmAndamento = true;
+                $.ajax({
+                    url : this.urlBase + this.urlApiMozilla + '&q=' + novaPalavraChave
+                }).done(this.updateResultados);
+            }
+        }
+    });
+</script>
+</html>
