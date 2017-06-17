@@ -86,7 +86,14 @@
                         let pom = document.createElement('a');
                         pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(this.dados.documents[i].html));
                         pom.setAttribute('download', this.dataAtualFormatada + ' - ' + this.dados.documents[i].title + '.html');
-                        pom.click();
+
+                        if (document.createEvent) {
+                            let event = document.createEvent('MouseEvents');
+                            event.initEvent('click', true, true);
+                            pom.dispatchEvent(event);
+                        } else {
+                            pom.click();
+                        }
                     }
                 }
             }
