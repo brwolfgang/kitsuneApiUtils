@@ -85,10 +85,21 @@
 
                         let pom = document.createElement('a');
                         pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(this.dados.documents[i].html));
-                        pom.setAttribute('download', this.dados.documents[i].title + '.html');
+                        pom.setAttribute('download', this.dataAtualFormatada + ' - ' + this.dados.documents[i].title + '.html');
                         pom.click();
                     }
                 }
+            }
+        },
+        computed: {
+            dataAtualFormatada() {
+                let dataAtual = new Date();
+                return "" + dataAtual.getFullYear() +
+                    (dataAtual.getMonth() + 1) +
+                    dataAtual.getDate() +
+                    dataAtual.getHours() +
+                    dataAtual.getMinutes() +
+                    dataAtual.getSeconds();
             }
         },
         template: `
