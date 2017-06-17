@@ -21,8 +21,8 @@
 <div id="app"></div>
 </body>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js" type="text/javascript"></script>
 <script src="https://unpkg.com/vue" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-resource" type="text/javascript"></script>
 
 <script type="text/javascript">
     Vue.component('pesquisa-input', {
@@ -67,6 +67,41 @@
     });
 
     Vue.component('pesquisa-resultado', {
+        data: function () {
+            return {
+            }
+        },
+        props: {
+            dados: Object,
+            baseUrlArtigo: String,
+            palavraChave: String,
+            buscaEmAndamento: Boolean
+        },
+        methods: {
+            downloadHtmlDocumento(idDocumento) {
+                for(let i = 0; i < this.dados.documents.length; i++) {
+                    if (this.dados.documents[i].id === idDocumento) {
+                        console.log(this.dados.documents[i].url);
+
+                        let pom = document.createElement('a');
+                        pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(this.dados.documents[i].html));
+                        pom.setAttribute('download', this.dataAtualFormatada + ' - ' + this.dados.documents[i].title + '.html');
+                        pom.click();
+                    }
+                }
+            }
+        },
+        computed: {
+            dataAtualFormatada() {
+                let dataAtual = new Date();
+                return "" + dataAtual.getFullYear() +
+                    (dataAtual.getMonth() + 1) +
+                    dataAtual.getDate() +
+                    dataAtual.getHours() +
+                    dataAtual.getMinutes() +
+                    dataAtual.getSeconds();
+            }
+        },
         template: `
     <div class="w3-margin-bottom w3-col s12 w3-card-4">
             <header class="w3-container w3-blue-grey">
@@ -77,23 +112,13 @@
                     <ol v-if="!buscaEmAndamento">
                         <li v-for="documento in dados.documents">
                         <a v-bind:href="baseUrlArtigo + documento.url" target="_blank"><b>{{documento.title}}</b></a>
-                        <a title="Download HTML do documento" :href=""><i class="material-icons">file_download</i></a>
+                        <a title="Download HTML do documento" @click="downloadHtmlDocumento(documento.id)"><i class="material-icons">file_download</i></a>
                         <ul><li>{{documento.summary}}</li></ul>
                         </li>
                     </ol>
                 </div>
             </div>
-        </div>`,
-        data: function () {
-            return {
-            }
-        },
-        props: {
-            dados: Object,
-            baseUrlArtigo: String,
-            palavraChave: String,
-            buscaEmAndamento: Boolean
-        }
+        </div>`
     });
 
     let vueApp = new Vue({
@@ -137,9 +162,6 @@
                 this.palavraChave = novaPalavraChave;
             },
             updateResultados: function (dados) {
-                console.log(dados);
-                this.buscaEmAndamento = false;
-
                 this.listaResultados.documents = dados.documents;
                 this.listaResultados.questions = dados.questions;
             }
@@ -148,9 +170,16 @@
         watch: {
             palavraChave: function (novaPalavraChave) {
                 this.buscaEmAndamento = true;
-                $.ajax({
-                    url : this.urlBase + this.urlApiMozilla + '&q=' + novaPalavraChave
-                }).done(this.updateResultados);
+
+                let urlConsulta = this.urlBase + this.urlApiMozilla + '&q=' + novaPalavraChave;
+
+                this.$http.get(urlConsulta).then(response => {
+                    this.buscaEmAndamento = false;
+                    this.updateResultados(response.body);
+                }, response => {
+                    this.buscaEmAndamento = false;
+                    alert("Houve uma falha ao consultar a API do Kitsune");
+                });
             }
         }
     });
