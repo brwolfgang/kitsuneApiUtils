@@ -103,16 +103,26 @@
                     dataAtual.getHours() +
                     dataAtual.getMinutes() +
                     dataAtual.getSeconds();
+            },
+            tituloListaResultados() {
+                if (this.dados.documents.length === 0 ) {
+                    return "Nenhum resultado na busca por " + this.palavraChave;
+                } else if (this.dados.documents.length === 1) {
+                    return '1 artigo contendo \"" + this.palavraChave + "\"';
+                } else {
+                    return this.dados.documents.length + ' artigos contendo "' + this.palavraChave + '"';
+                }
             }
         },
         template: `
             <div class="w3-margin-bottom w3-col s12 w3-card-4">
                 <header class="w3-container w3-blue-grey">
-                    <h3>{{dados.documents.length}} artigo(s) contendo "{{palavraChave}}"</h3>
+                    <h3 v-if="buscaEmAndamento">Pesquisando artigos contendo "{{palavraChave}}"</h3>
+                    <h3 v-else>{{tituloListaResultados}}</h3>
                 </header>
                 <div class="w3-container">
                     <div class="w3-section">
-                        <table class="w3-table w3-striped w3-bordered" v-show="!buscaEmAndamento">
+                        <table class="w3-table w3-striped" v-show="!buscaEmAndamento">
                             <tr>
                                 <th style="width: 30%;">Título</th>
                                 <th style="width: 60%;">Resumo</th>
@@ -132,6 +142,7 @@
                         </table>
                     </div>
                 </div>
+            </div>
             `
     });
 
@@ -141,20 +152,27 @@
         template: `
             <div>
                 <div class="w3-container w3-blue-gray w3-margin-bottom w3-card-4">
-                    <h2>Kitsune API Utils <span class="w3-button w3-display-topright"><a href="https://github.com/brwolfgang/kitsuneApiUtils" target="_blank"><i class="fa fa-github"></a></i></span></h2>
+                    <h2>
+                        Kitsune API Utils
+                        <span class="w3-button w3-display-topright">
+                                <a href="https://github.com/brwolfgang/kitsuneApiUtils" target="_blank">
+                                <i class="fa fa-github"/>
+                                </a></span>
+                    </h2>
                 </div>
                 <div style="margin-left: 3%; margin-right: 3%">
                     <pesquisa-input
-                        @updatePalavraChave="updatePalavraChave"
-                        v-bind:buscaEmAndamento="buscaEmAndamento"
+                            @updatePalavraChave="updatePalavraChave"
+                            v-bind:buscaEmAndamento="buscaEmAndamento"
                     />
                     <pesquisa-resultado
-                        v-if="listaResultados.documents.length > 0"
-                        v-bind:dados="listaResultados"
-                        v-bind:baseUrlArtigo="urlBase"
-                        v-bind:palavraChave="palavraChave"
-                        v-bind:buscaEmAndamento="buscaEmAndamento"
+                            v-if="listaResultados.documents.length > 0"
+                            v-bind:dados="listaResultados"
+                            v-bind:baseUrlArtigo="urlBase"
+                            v-bind:palavraChave="palavraChave"
+                            v-bind:buscaEmAndamento="buscaEmAndamento"
                     />
+                    <p v-if="exibirResultadoZerado && !buscaEmAndamento">Nenhum resultado encontrado para "{{palavraChave}}"</p>
                 </div>
             </div>`,
 
@@ -167,7 +185,8 @@
                     documents: [],
                     questions: []
                 },
-                buscaEmAndamento: false
+                buscaEmAndamento: false,
+                exibirResultadoZerado: false
             };
         },
 
@@ -178,6 +197,7 @@
             updateResultados: function (dados) {
                 this.listaResultados.documents = dados.documents;
                 this.listaResultados.questions = dados.questions;
+                this.exibirResultadoZerado = this.listaResultados.documents.length === 0
             }
         },
 
