@@ -11,10 +11,6 @@
         body {
             font-family: "Open Sans",sans-serif;
         }
-
-        .material-icons {
-            vertical-align: middle;
-        }
     </style>
 </head>
 <body>
@@ -110,28 +106,32 @@
             }
         },
         template: `
-<div class="w3-margin-bottom w3-col s12 w3-card-4">
-    <header class="w3-container w3-blue-grey">
-        <h3>{{dados.documents.length}} artigo(s) contendo "{{palavraChave}}"</h3>
-    </header>
-    <div class="w3-container">
-        <div class="w3-section">
-            <table class="w3-table w3-striped w3-bordered" v-show="!buscaEmAndamento">
-                <tr>
-                    <th style="width: 30%;">Título</th>
-                    <th style="width: 60%;">Resumo</th>
-                    <th style="width: 10%; text-align: center">Opções</th>
-                </tr>
-                <tr v-for="documento, index in dados.documents" v-bind:id="index">
-                    <td>{{documento.title}}</td>
-                    <td>{{documento.summary}}</td>
-                    <td style="text-align: center; vertical-align: middle; font-size: 24px">
-                        <a title="Ver documento no Kitsune" v-bind:href="baseUrlArtigo + documento.url" target="_blank"><i class="fa fa-external-link"></i></a>
-                        <a title="Editar documento no Kitsune" v-bind:href="baseUrlArtigo + documento.url + '/edit'" target="_blank"><i class="fa fa-pencil"></i></a>
-                        <a title="Baixar o HTML do documento" v-bind:href="'#' + index" @click="downloadHtmlDocumento(documento.id)"><i class="fa fa-download"></i></a>
-                    </td>
-                </tr>
-            </table>
+            <div class="w3-margin-bottom w3-col s12 w3-card-4">
+                <header class="w3-container w3-blue-grey">
+                    <h3>{{dados.documents.length}} artigo(s) contendo "{{palavraChave}}"</h3>
+                </header>
+                <div class="w3-container">
+                    <div class="w3-section">
+                        <table class="w3-table w3-striped w3-bordered" v-show="!buscaEmAndamento">
+                            <tr>
+                                <th style="width: 30%;">Título</th>
+                                <th style="width: 60%;">Resumo</th>
+                                <th style="width: 10%; text-align: center">Opções</th>
+                            </tr>
+                            <tbody>
+                            <tr v-for="documento, index in dados.documents" v-bind:id="index">
+                                <td>{{documento.title}}</td>
+                                <td>{{documento.summary}}</td>
+                                <td style="text-align: center; vertical-align: middle; font-size: 24px">
+                                    <a title="Ver documento no Kitsune" v-bind:href="baseUrlArtigo + documento.url" target="_blank"><i class="fa fa-external-link"></i></a>
+                                    <a title="Editar documento no Kitsune" v-bind:href="baseUrlArtigo + documento.url + '/edit'" target="_blank"><i class="fa fa-pencil"></i></a>
+                                    <a title="Baixar o HTML do documento" v-bind:href="'#' + index" @click="downloadHtmlDocumento(documento.id)"><i class="fa fa-download"></i></a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             `
     });
 
