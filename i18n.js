@@ -45,7 +45,7 @@ const messages = {
                 btn_search:                 "Search",
                 txt_searching:              "Searching...",
                 error_missing_keyword:      "Please enter a keyword",
-                error_connection_kitsune:   "There was an error conecting to Kitsune, please try again."
+                error_connection_kitsune:   "There was an error connecting to Kitsune, please try again."
             },
             result_panel: {
                 // Pluralization format: String for 0 results | String for one result | String for 2 or more results
