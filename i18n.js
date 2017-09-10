@@ -1,6 +1,7 @@
 const messages = {
     pt_BR: {
-        description: "PT_BR - Português do Brasil",
+        mozilla_api_locale: "pt-BR",
+        description: "pt_BR - Português do Brasil",
         message: {
             locale_picker: {
                 txt_title: "Locale",
@@ -29,7 +30,8 @@ const messages = {
         }
     },
     en_US: {
-        description: "EN_US - North American English",
+        mozilla_api_locale: "en-US",
+        description: "en_US - North American English",
         message: {
             locale_picker: {
                 txt_title: "Locale",

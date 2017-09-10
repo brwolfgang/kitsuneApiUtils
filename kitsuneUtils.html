@@ -58,7 +58,11 @@
         },
         watch: {
             locale: function (newLocale) {
-                this.$emit('updateLocale', newLocale);
+                for (let i = 0; i < this.locales.length; i++) {
+                    if (this.locales[i].code === newLocale) {
+                        this.$emit('updateLocale', this.locales[i]);
+                    }
+                }
             }
         }
     });
@@ -95,7 +99,6 @@
         },
         methods: {
             updatePalavraChave: function () {
-                console.log(i18n.locale);
                 if (this.palavraChave.trim().length !== 0) {
                     this.$emit('updatePalavraChave', this.palavraChave);
                 } else {
@@ -120,8 +123,6 @@
             downloadHtmlDocumento(idDocumento) {
                 for(let i = 0; i < this.dados.documents.length; i++) {
                     if (this.dados.documents[i].id === idDocumento) {
-                        console.log(this.dados.documents[i].url);
-
                         let pom = document.createElement('a');
                         pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(this.dados.documents[i].html));
                         pom.setAttribute('download', this.dataAtualFormatada + ' - ' + this.dados.documents[i].title + '.html');
@@ -151,7 +152,6 @@
         template: `
             <div class="w3-margin-bottom w3-col s12 w3-card-4">
                 <header class="w3-container w3-blue-grey">
-                    <!--<h3>{{ $tc("message.result.txt_title", dados.documents.length, {count: {{dados.documents.length}}, keyword: {{palavraChave}} } }}</h3>-->
                     <h3>{{ $tc("message.result_panel.txt_title", dados.documents.length, {count: dados.documents.length, keyword: palavraChave}) }}</h3>
                 </header>
                 <div class="w3-container">
@@ -212,9 +212,9 @@
 
         data: function () {
             return {
+                kitsuneLocale: 'pt-BR',
                 palavraChave: '',
                 urlBase: 'https://support.mozilla.org',
-                urlApiMozilla: '/api/2/search/suggest?locale=pt-BR&max_documents=100',
                 listaResultados: {
                     documents: [],
                     questions: []
@@ -225,7 +225,8 @@
 
         methods: {
             updateLocale: function (newLocale) {
-                i18n.locale = newLocale;
+                i18n.locale = newLocale.code;
+                this.kitsuneLocale = newLocale.mozillaApiLocale;
                 this.eraseResults();
             },
             updatePalavraChave: function (novaPalavraChave) {
@@ -257,6 +258,9 @@
             }
         },
         computed: {
+            urlApiMozilla: function () {
+                return '/api/2/search/suggest?max_documents=100&locale=' + this.kitsuneLocale;
+            },
             locales: function() {
                 let arrayLocales = [];
 
@@ -265,6 +269,7 @@
                 for(let i = 0; i < chaves.length; i++) {
                     let locale = {
                         code: chaves[i],
+                        mozillaApiLocale: messages[chaves[i]].mozilla_api_locale,
                         description: messages[chaves[i]].description
                     };
 
