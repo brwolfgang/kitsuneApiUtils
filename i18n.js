@@ -13,7 +13,7 @@ const messages = {
                 btn_search:                 "Pesquisar",
                 txt_searching:              "Pesquisando...",
                 error_missing_keyword:      "Digite uma palavra chave",
-                error_connection_kitsune:    "Houve uma falha ao consultar a API do Kitsune, tente novamente."
+                error_connection_kitsune:   "Houve uma falha ao consultar a API do Kitsune, tente novamente."
             },
             result_panel: {
                 // Pluralization format: String for 0 results | String for one result | String for 2 or more results
@@ -45,7 +45,7 @@ const messages = {
                 btn_search:                 "Search",
                 txt_searching:              "Searching...",
                 error_missing_keyword:      "Please enter a keyword",
-                error_connection_kitsune:    "There was an error conecting to Kitsune, please try again."
+                error_connection_kitsune:   "There was an error conecting to Kitsune, please try again."
             },
             result_panel: {
                 // Pluralization format: String for 0 results | String for one result | String for 2 or more results

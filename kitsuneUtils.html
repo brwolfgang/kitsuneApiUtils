@@ -233,6 +233,10 @@
                 this.palavraChave = novaPalavraChave;
             },
             updateResultados: function (dados) {
+                if (dados.documents.length === 0) {
+                    alert(i18n.tc("message.result_panel.txt_title", 0, {keyword: this.palavraChave}))
+                }
+
                 this.listaResultados.documents = dados.documents;
                 this.listaResultados.questions = dados.questions;
             },
