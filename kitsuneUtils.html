@@ -102,16 +102,14 @@
                 if (this.palavraChave.trim().length !== 0) {
                     this.$emit('updatePalavraChave', this.palavraChave);
                 } else {
-                    alert('Digite uma palavra chave');
+                    alert(i18n.t("message.search_panel.error_missing_keyword"));
                 }
             }
         }
     });
-
     Vue.component('pesquisa-resultado', {
         data: function () {
-            return {
-            }
+            return {}
         },
         props: {
             dados: Object,
@@ -188,7 +186,9 @@
         template: `
             <div>
                 <div class="w3-container w3-blue-gray w3-margin-bottom w3-card-4">
-                    <h2>Kitsune API Utils <span class="w3-button w3-display-topright"><a href="https://github.com/brwolfgang/kitsuneApiUtils" target="_blank"><i class="fa fa-github"></i></a></span></h2>
+                    <h2>Kitsune API Utils <span class="w3-button w3-display-topright">
+                    <a href="https://github.com/brwolfgang/kitsuneApiUtils" target="_blank"><i class="fa fa-github"></i></a>
+                    </span></h2>
                 </div>
                 <div style="margin-left: 3%; margin-right: 3%">
                     <locale-picker
@@ -208,7 +208,7 @@
                     />
                 </div>
             </div>
-`,
+        `,
 
         data: function () {
             return {
@@ -253,7 +253,7 @@
                     this.updateResultados(response.body);
                 }, response => {
                     this.buscaEmAndamento = false;
-                    alert("Houve uma falha ao consultar a API do Kitsune");
+                    alert(i18n.t("message.search_panel.error_connection_kitsune"));
                 });
             }
         },
