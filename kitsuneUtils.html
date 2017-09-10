@@ -19,19 +19,57 @@
 </head>
 <body>
 <div id="app"></div>
-</body>
 
 <script src="https://unpkg.com/vue" type="text/javascript"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue-resource" type="text/javascript"></script>
+<script src="https://unpkg.com/vue-i18n/dist/vue-i18n.js" type="text/javascript"></script>
+<script src="i18n.js" type="text/javascript"></script>
 
 <script type="text/javascript">
+
+    const default_locale = 'pt_BR';
+
+    const i18n = new VueI18n({
+        locale: default_locale,
+        fallbackLocale: default_locale,
+        messages,
+    });
+
+    Vue.component('locale-picker', {
+        //language=HTML
+        template: `
+            <div class="w3-margin-bottom w3-col s3 w3-card-4 w3-margin-right">
+                <header class="w3-container w3-blue-grey"><h3>{{ $tc("message.locale_picker.txt_title") }}</h3></header>
+                <div class="w3-container">
+                    <div class="w3-section"><label for="termosConsulta">{{ $t("message.locale_picker.txt_description") }}</label>
+                        <select class="w3-select w3-border" name="localePicker" v-model="locale">
+                            <option v-for="locale in locales" :value="locale.code">{{ locale.description }}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>`,
+        data: function () {
+            return {
+                locale: default_locale
+            };
+        },
+        props: {
+            locales: Array
+        },
+        watch: {
+            locale: function (newLocale) {
+                this.$emit('updateLocale', newLocale);
+            }
+        }
+    });
+
     Vue.component('pesquisa-input', {
         //language=HTML
         template: `
             <div class="w3-margin-bottom w3-col s3 w3-card-4 w3-margin-right">
-                <header class="w3-container w3-blue-grey"><h3>Consulta</h3></header>
+                <header class="w3-container w3-blue-grey"><h3>{{ $tc("message.search_panel.txt_title") }}</h3></header>
                 <div class="w3-container">
-                    <div class="w3-section"><label for="termosConsulta">Palavra chave</label>
+                    <div class="w3-section"><label for="termosConsulta">{{ $t("message.search_panel.txt_keyword") }}</label>
                         <input type="text"
                                v-model="palavraChave"
                                id="termosConsulta"
@@ -42,8 +80,8 @@
                         <button class="w3-button w3-blue-gray"
                                 v-if="!buscaEmAndamento"
                                 @click="updatePalavraChave()"
-                        >Pesquisar</button>
-                        <span v-if="buscaEmAndamento"><i class="fa fa-refresh w3-spin"></i> Pesquisando...</span>
+                        >{{ $t("message.search_panel.btn_search") }}</button>
+                        <span v-if="buscaEmAndamento"><i class="fa fa-refresh w3-spin"></i> {{ $t("message.search_panel.txt_searching") }}</span>
                     </p>
                 </div>
             </div>`,
@@ -57,6 +95,7 @@
         },
         methods: {
             updatePalavraChave: function () {
+                console.log(i18n.locale);
                 if (this.palavraChave.trim().length !== 0) {
                     this.$emit('updatePalavraChave', this.palavraChave);
                 } else {
@@ -110,53 +149,66 @@
             }
         },
         template: `
-<div class="w3-margin-bottom w3-col s12 w3-card-4">
-    <header class="w3-container w3-blue-grey">
-        <h3>{{dados.documents.length}} artigo(s) contendo "{{palavraChave}}"</h3>
-    </header>
-    <div class="w3-container">
-        <div class="w3-section">
-            <table class="w3-table w3-striped w3-bordered" v-show="!buscaEmAndamento">
-                <tr>
-                    <th style="width: 30%;">Título</th>
-                    <th style="width: 60%;">Resumo</th>
-                    <th style="width: 10%; text-align: center">Opções</th>
-                </tr>
-                <tr v-for="documento, index in dados.documents" v-bind:id="index">
-                    <td>{{documento.title}}</td>
-                    <td>{{documento.summary}}</td>
-                    <td style="text-align: center; vertical-align: middle; font-size: 24px">
-                        <a title="Ver documento no Kitsune" v-bind:href="baseUrlArtigo + documento.url" target="_blank"><i class="fa fa-external-link"></i></a>
-                        <a title="Editar documento no Kitsune" v-bind:href="baseUrlArtigo + documento.url + '/edit'" target="_blank"><i class="fa fa-pencil"></i></a>
-                        <a title="Baixar o HTML do documento" v-bind:href="'#' + index" @click="downloadHtmlDocumento(documento.id)"><i class="fa fa-download"></i></a>
-                    </td>
-                </tr>
-            </table>
+            <div class="w3-margin-bottom w3-col s12 w3-card-4">
+                <header class="w3-container w3-blue-grey">
+                    <!--<h3>{{ $tc("message.result.txt_title", dados.documents.length, {count: {{dados.documents.length}}, keyword: {{palavraChave}} } }}</h3>-->
+                    <h3>{{ $tc("message.result_panel.txt_title", dados.documents.length, {count: dados.documents.length, keyword: palavraChave}) }}</h3>
+                </header>
+                <div class="w3-container">
+                    <div class="w3-section">
+                        <table class="w3-table w3-striped w3-bordered" v-show="!buscaEmAndamento">
+                            <tr>
+                                <th style="width: 5%; text-align: center"></th>
+                                <th style="width: 30%;">{{ $t("message.result_table_header.txt_title") }}</th>
+                                <th style="width: 55%;">{{ $t("message.result_table_header.txt_summary") }}</th>
+                                <th style="width: 10%; text-align: center">{{ $t("message.result_table_header.txt_options") }}</th>
+                            </tr>
+                            <tr v-for="documento, index in dados.documents" v-bind:id="index">
+                                <td style="font-weight: bold">{{index + 1}}.</td>
+                                <td>{{documento.title}}</td>
+                                <td>{{documento.summary}}</td>
+                                <td style="text-align: center; vertical-align: middle; font-size: 24px">
+                                    <a :title="$t('message.result_table_row.txt_action_view')" :href="baseUrlArtigo + documento.url" target="_blank"><i class="fa fa-external-link"></i></a>
+                                    <a :title="$t('message.result_table_row.txt_action_edit')" :href="baseUrlArtigo + documento.url + '/edit'" target="_blank"><i class="fa fa-pencil"></i></a>
+                                    <a :title="$t('message.result_table_row.txt_action_download')" :href="'#' + index" @click="downloadHtmlDocumento(documento.id)"><i class="fa fa-download"></i></a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
             `
     });
 
+
     let vueApp = new Vue({
         el: '#app',
+        i18n,
         //language=html
         template: `
             <div>
                 <div class="w3-container w3-blue-gray w3-margin-bottom w3-card-4">
-                    <h2>Kitsune API Utils <span class="w3-button w3-display-topright"><a href="https://github.com/brwolfgang/kitsuneApiUtils" target="_blank"><i class="fa fa-github"></a></i></span></h2>
+                    <h2>Kitsune API Utils <span class="w3-button w3-display-topright"><a href="https://github.com/brwolfgang/kitsuneApiUtils" target="_blank"><i class="fa fa-github"></i></a></span></h2>
                 </div>
                 <div style="margin-left: 3%; margin-right: 3%">
+                    <locale-picker
+                            @updateLocale="updateLocale"
+                            v-bind:locales="locales"
+                    />
                     <pesquisa-input
-                        @updatePalavraChave="updatePalavraChave"
-                        v-bind:buscaEmAndamento="buscaEmAndamento"
+                            @updatePalavraChave="updatePalavraChave"
+                            v-bind:buscaEmAndamento="buscaEmAndamento"
                     />
                     <pesquisa-resultado
-                        v-if="listaResultados.documents.length > 0"
-                        v-bind:dados="listaResultados"
-                        v-bind:baseUrlArtigo="urlBase"
-                        v-bind:palavraChave="palavraChave"
-                        v-bind:buscaEmAndamento="buscaEmAndamento"
+                            v-if="listaResultados.documents.length > 0"
+                            v-bind:dados="listaResultados"
+                            v-bind:baseUrlArtigo="urlBase"
+                            v-bind:palavraChave="palavraChave"
+                            v-bind:buscaEmAndamento="buscaEmAndamento"
                     />
                 </div>
-            </div>`,
+            </div>
+`,
 
         data: function () {
             return {
@@ -172,12 +224,20 @@
         },
 
         methods: {
+            updateLocale: function (newLocale) {
+                i18n.locale = newLocale;
+                this.eraseResults();
+            },
             updatePalavraChave: function (novaPalavraChave) {
                 this.palavraChave = novaPalavraChave;
             },
             updateResultados: function (dados) {
                 this.listaResultados.documents = dados.documents;
                 this.listaResultados.questions = dados.questions;
+            },
+            eraseResults: function () {
+                this.listaResultados.documents = [];
+                this.listaResultados.questions = [];
             }
         },
 
@@ -195,7 +255,26 @@
                     alert("Houve uma falha ao consultar a API do Kitsune");
                 });
             }
+        },
+        computed: {
+            locales: function() {
+                let arrayLocales = [];
+
+                let chaves = Object.keys(messages);
+
+                for(let i = 0; i < chaves.length; i++) {
+                    let locale = {
+                        code: chaves[i],
+                        description: messages[chaves[i]].description
+                    };
+
+                    arrayLocales.push(locale);
+                }
+
+                return arrayLocales;
+            }
         }
     });
 </script>
+</body>
 </html>
