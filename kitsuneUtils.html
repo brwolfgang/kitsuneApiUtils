@@ -23,16 +23,16 @@
 <script src="https://unpkg.com/vue" type="text/javascript"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue-resource" type="text/javascript"></script>
 <script src="https://unpkg.com/vue-i18n/dist/vue-i18n.js" type="text/javascript"></script>
-<script src="i18n.js" type="text/javascript"></script>
+<script src="src/assets/i18n.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 
     const default_locale = 'pt_BR';
 
     const i18n = new VueI18n({
-        locale: default_locale,
-        fallbackLocale: default_locale,
-        messages,
+      locale: default_locale,
+      fallbackLocale: default_locale,
+      messages,
     });
 
     Vue.component('locale-picker', {
