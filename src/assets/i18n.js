@@ -17,12 +17,14 @@ const messages = {
       },
       result_panel: {
         // Pluralization format: String for 0 results | String for one result | String for 2 or more results
-        txt_title: 'Nenhum resultado para "{keyword}" | Um resultado para "{keyword}" | {count} resultados para "{keyword}"'
+        txt_title: 'Nenhum resultado para "{keyword}" | Um resultado para "{keyword}" | {count} resultados para "{keyword}"',
+        txt_title_filter: 'Nenhum resultado para o filtro "{keyword}" | Um resultado para o filtro "{keyword}" | {count} resultados para o filtro "{keyword}"'
       },
       result_table_header: {
         txt_title: 'Título',
         txt_summary: 'Resumo',
-        txt_options: 'Opções'
+        txt_options: 'Opções',
+        txt_filter: 'Filtrar resultados'
       },
       result_table_row: {
         txt_action_view: 'Visualizar documento no Kitsune',
@@ -49,12 +51,14 @@ const messages = {
       },
       result_panel: {
         // Pluralization format: String for 0 results | String for one result | String for 2 or more results
-        txt_title: 'No results for "{keyword}" | Single result for "{keyword}" | {count} results for "{keyword}"'
+        txt_title: 'No results for "{keyword}" | Single result for "{keyword}" | {count} results for "{keyword}"',
+        txt_title_filter: 'No results for filter "{keyword}" | Single result for filter "{keyword}" | {count} results for filter "{keyword}"'
       },
       result_table_header: {
         txt_title: 'Title',
         txt_summary: 'Summary',
-        txt_options: 'Options'
+        txt_options: 'Options',
+        txt_filter: 'Filter results'
       },
       result_table_row: {
         txt_action_view: 'View document on Kitsune',

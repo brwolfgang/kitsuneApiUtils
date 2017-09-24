@@ -93,8 +93,6 @@
 
         let urlConsulta = this.urlBase + this.urlApiMozilla + '&q=' + novaPalavraChave
 
-        console.log(urlConsulta)
-
         this.$http.get(urlConsulta).then(response => {
           this.buscaEmAndamento = false
           this.updateResultados(response.body)

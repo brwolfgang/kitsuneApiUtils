@@ -1,7 +1,18 @@
 <template>
   <div class="w3-margin-bottom w3-col s12 w3-card-4">
     <header class="w3-container w3-blue-grey">
-      <h3>{{ $tc("message.result_panel.txt_title", dados.documents.length, {count: dados.documents.length, keyword: palavraChave}) }}</h3>
+      <table style="width: 100%">
+        <tr>
+          <td>
+            <h3>{{ $tc("message.result_panel.txt_title", dados.documents.length, {count: dados.documents.length, keyword: palavraChave}) }}
+              <span v-if="resultFilter.trim().length > 0"> - {{ $tc("message.result_panel.txt_title_filter", filteredResultList.length, {count: filteredResultList.length, keyword: resultFilter.trim()}) }}</span>
+            </h3>
+          </td>
+          <td style="text-align: right">
+            <label for="filter">{{ $t("message.result_table_header.txt_filter") }}</label>
+            <input type="text" id="filter" v-model.lazy="resultFilter"></td>
+        </tr>
+      </table>
     </header>
     <div class="w3-container">
       <div class="w3-section">
@@ -12,7 +23,7 @@
             <th style="width: 55%;">{{ $t("message.result_table_header.txt_summary") }}</th>
             <th style="width: 10%; text-align: center">{{ $t("message.result_table_header.txt_options") }}</th>
           </tr>
-          <tr v-for="documento, index in dados.documents" v-bind:id="index">
+          <tr v-for="documento, index in filteredResultList" v-bind:id="index">
             <td style="font-weight: bold">{{index + 1}}.</td>
             <td>{{documento.title}}</td>
             <td>{{documento.summary}}</td>
@@ -31,7 +42,9 @@
 <script>
   export default {
     data: function () {
-      return {}
+      return {
+        resultFilter: ''
+      }
     },
     props: {
       dados: Object,
@@ -67,6 +80,20 @@
           dataAtual.getHours() +
           dataAtual.getMinutes() +
           dataAtual.getSeconds()
+      },
+      filteredResultList () {
+        const upperCaseFilter = this.resultFilter.trim().toUpperCase()
+
+        return this.dados.documents.filter((documento) => {
+          return documento.title.toUpperCase().includes(upperCaseFilter) ||
+            documento.summary.toUpperCase().includes(upperCaseFilter)
+        })
       }
-    }}
+    },
+    watch: {
+      buscaEmAndamento: function (newValue) {
+        this.resultFilter = ''
+      }
+    }
+  }
 </script>
