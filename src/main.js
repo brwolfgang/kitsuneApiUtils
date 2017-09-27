@@ -7,7 +7,7 @@ import Main from './components/Main.vue'
 import localePicker from './components/LocalePicker.vue'
 import SearchInput from './components/SearchInput.vue'
 import SearchResult from './components/SearchResult.vue'
-import Messages from './assets/i18n'
+import { messages } from './assets/i18n'
 
 Vue.config.productionTip = false
 Vue.use(VueResource)
@@ -17,8 +17,6 @@ Vue.component('Main', Main)
 Vue.component('LocalePicker', localePicker)
 Vue.component('searchInput', SearchInput)
 Vue.component('searchResult', SearchResult)
-
-const messages = Messages.messages
 
 const defaultLocale = 'pt_BR'
 

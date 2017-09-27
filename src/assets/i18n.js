@@ -1,4 +1,4 @@
-const messages = {
+export const messages = {
   pt_BR: {
     mozilla_api_locale: 'pt-BR',
     description: 'pt_BR - Português do Brasil',
@@ -67,8 +67,4 @@ const messages = {
       }
     }
   }
-}
-
-export default {
-  messages
 }
